@@ -151,7 +151,7 @@ to fill in. Useful knobs:
 | `N_GPUS_PER_NODE` | GPUs used by the training phase |
 | `CKPT_ROOT` | where checkpoints are written; defaults to `domains/<domain>/outputs` |
 | `BASE_MODEL` | base policy; `Qwen/Qwen3.5-2B` for Search QA and Mathematical Reasoning, `Qwen/Qwen3.5-4B` for Chess Puzzles |
-| `BASE_HARNESS` | the harness `h0` a run starts from |
+| `BASE_HARNESS` | the harness `h0` a run starts from; each domain's default is `environments/<env>/base_harness.py` |
 | `MAX_ROUNDS` | safety cap on the number of cycles |
 
 The paper's runs used eight H200s per node. The launchers here are cleaned

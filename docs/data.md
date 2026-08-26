@@ -111,7 +111,15 @@ splits are disjoint by construction.
 
 ---
 
-## 4. Verifiers
+## 4. The base harness h0
+
+Every condition in a domain starts from the same `h0`, at
+`domains/<domain>/environments/<env>/base_harness.py`. For Search QA it forwards
+the model's query unchanged, returns a single passage truncated to 200 tokens,
+and terminates after two assistant turns; the shared retrieval and prompt
+machinery it builds on lives beside it in `search_r1_env.py`.
+
+## 5. Verifiers
 
 Each domain scores a trajectory with a binary verifier `R(x, tau)` that is fixed
 across the whole study; it is used identically for accepting RSFT trajectories,
