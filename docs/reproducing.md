@@ -69,6 +69,10 @@ the paper; `PROPOSALS_PER_ITER` defaults to the `M = 3` of the paper.
 
 ### WHALE
 
+Defaults reproduce the main comparison. Note that the launcher defaults differ
+from the bare defaults of the internal scripts, which sit at the `(0.2, 2)`
+ablation point; the paper's runs passed the values below explicitly.
+
 ```bash
 domains/search_qa/run/whale.sh
 domains/math_reasoning/run/whale.sh
@@ -150,7 +154,18 @@ to fill in. Useful knobs:
 | `BASE_HARNESS` | the harness `h0` a run starts from |
 | `MAX_ROUNDS` | safety cap on the number of cycles |
 
-The paper's runs used eight H200s per node. The launchers in this repository are
-cleaned re-implementations of the scheduler scripts that produced those numbers:
-the alternation logic is the same, while node staging, index pre-fetch and
-inter-phase GPU cleanup were removed because they are site-specific.
+The paper's runs used eight H200s per node. The launchers here are cleaned
+re-implementations of the scheduler scripts that produced those numbers. They
+pass the same contract to the two operators — the weight-update phase receives
+`trainer.total_training_steps` and the `trainer.online_rsft.*` overrides, and the
+harness-search phase receives `BASELINE_HARNESS_OVERRIDE` (the incoming harness)
+and `VLLM_MODEL` (the checkpoint just produced) — while node staging, retrieval
+index pre-fetch and inter-phase GPU cleanup were dropped as site-specific.
+
+The alternation driver was verified with the training and harness-search steps
+replaced by stubs: cycle boundaries, the hand-off of the accepted harness into
+the next weight-update phase, the hand-off of the new checkpoint into the next
+harness search, the Hydra overrides, the adaptive flags, and resumption of a
+half-finished run all behave as intended. An end-to-end GPU run of these
+launchers has not been performed; the numbers in the paper come from the
+scheduler scripts they were derived from.
