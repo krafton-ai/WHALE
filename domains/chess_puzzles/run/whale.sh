@@ -14,6 +14,6 @@ export BASE_MODEL="${BASE_MODEL:-Qwen/Qwen3.5-4B}"
 export MH_CONFIG="$DOMAIN_DIR/meta_harness/config-chess-puzzle.json"
 export TOTAL_STEPS="${TOTAL_STEPS:-256}"   # 4 epochs at 64 steps/epoch
 export RUN_NAME="${RUN_NAME:-whale}"
-export ROUND_STEPS="${ROUND_STEPS:-38}"      # E = 0.6 epoch
+export ROUND_STEPS="${ROUND_STEPS:-13}"      # E = 0.2 epoch
 export ROUND_MH_ITERS="${ROUND_MH_ITERS:-5}"    # I = 6 counting the incoming harness
 exec bash "$DOMAIN_DIR/../../run/lib/alternate.sh"

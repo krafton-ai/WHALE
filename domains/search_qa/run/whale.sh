@@ -13,6 +13,6 @@ export BASE_HARNESS="${BASE_HARNESS:-$DOMAIN_DIR/environments/search_r1/base_har
 export BASE_MODEL="${BASE_MODEL:-Qwen/Qwen3.5-2B}"
 export TOTAL_STEPS="${TOTAL_STEPS:-296}"   # 4 epochs at 74 steps/epoch
 export RUN_NAME="${RUN_NAME:-whale}"
-export ROUND_STEPS="${ROUND_STEPS:-44}"      # E = 0.6 epoch
+export ROUND_STEPS="${ROUND_STEPS:-15}"      # E = 0.2 epoch
 export ROUND_MH_ITERS="${ROUND_MH_ITERS:-5}"    # I = 6 counting the incoming harness
 exec bash "$DOMAIN_DIR/../../run/lib/alternate.sh"

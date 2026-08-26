@@ -59,19 +59,16 @@ Trains under the fixed base harness for the domain's full epoch budget (4, 6 and
 ### Harness-only baseline
 
 ```bash
-ITERATIONS=40 domains/search_qa/run/mh_only.sh
-ITERATIONS=60 domains/math_reasoning/run/mh_only.sh
-ITERATIONS=40 domains/chess_puzzles/run/mh_only.sh
+domains/search_qa/run/mh_only.sh
+domains/math_reasoning/run/mh_only.sh
+domains/chess_puzzles/run/mh_only.sh
 ```
 
-Searches over the frozen base model. Those iteration counts are the ones used in
-the paper; `PROPOSALS_PER_ITER` defaults to the `M = 3` of the paper.
+Searches over the frozen base model. The iteration budgets default to the 40, 60
+and 40 of the paper, so the commands above can be run without `ITERATIONS`;
+`PROPOSALS_PER_ITER` defaults to the paper's `M = 3`.
 
 ### WHALE
-
-Defaults reproduce the main comparison. Note that the launcher defaults differ
-from the bare defaults of the internal scripts, which sit at the `(0.2, 2)`
-ablation point; the paper's runs passed the values below explicitly.
 
 ```bash
 domains/search_qa/run/whale.sh
@@ -79,22 +76,19 @@ domains/math_reasoning/run/whale.sh
 domains/chess_puzzles/run/whale.sh
 ```
 
-Defaults are the main comparison's `(E, I) = (0.6, 6)`: `ROUND_STEPS` is 0.6
-epoch of weight updates and `ROUND_MH_ITERS=5` harness-search iterations. `I = 6`
-in the paper counts the evaluation of the incoming harness as iteration 1, which
-is why the launcher passes 5.
+Defaults are `(E, I) = (0.2, 6)`, the schedule the paper finds strongest in both
+ablated domains: `ROUND_STEPS` is 0.2 epoch of weight updates and
+`ROUND_MH_ITERS=5` harness-search iterations. `I = 6` in the paper counts the
+evaluation of the incoming harness as iteration 1, which is why the launcher
+passes 5.
 
-To reproduce the schedule ablation, set the pair explicitly, for example
+One epoch is 74 steps in Search QA, 70 in Mathematical Reasoning and 64 in Chess
+Puzzles at the shared prompt batch size of 256, so any other schedule follows
+from those numbers, for example the `(0.6, 6)` of the main comparison:
 
 ```bash
-ROUND_STEPS=15 ROUND_MH_ITERS=1 domains/search_qa/run/whale.sh   # (0.2, 2)
-ROUND_STEPS=15 ROUND_MH_ITERS=5 domains/search_qa/run/whale.sh   # (0.2, 6)
-ROUND_STEPS=44 ROUND_MH_ITERS=1 domains/search_qa/run/whale.sh   # (0.6, 2)
-ROUND_STEPS=74 ROUND_MH_ITERS=9 domains/search_qa/run/whale.sh   # (1.0, 10)
+ROUND_STEPS=44 ROUND_MH_ITERS=5 domains/search_qa/run/whale.sh
 ```
-
-with one epoch equal to 74 steps in Search QA, 70 in Mathematical Reasoning and
-64 in Chess Puzzles at the shared prompt batch size of 256.
 
 ### Adaptive WHALE
 
