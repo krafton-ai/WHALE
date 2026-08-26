@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "proposer_model": "claude-opus-4-7",
+    "proposer_effort": "max",
+    "propose_timeout_s": 2400,
+    "proposals_per_iter": 3
+  },
+  "task_profiles": {
+    "default": {
+      "digit_choices": null
+    }
+  },
+  "models": [
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "api_base": "http://localhost:8044/v1",
+      "client_type": "openai_chat_completions"
+    }
+  ],
+  "seeds": [42],
+  "eval": {
+    "num_train_examples": 0,
+    "num_eval_examples": 256,
+    "eval_dataset_path": "",
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": 20,
+    "max_tokens": 8192,
+    "max_turns": 2,
+    "max_concurrent": 256,
+    "parallel_harness_evals": 3,
+    "max_failures_logged": 5,
+    "max_successes_logged": 2,
+    "enable_thinking": true,
+    "eval_timeout_s": 3600,
+    "eval_retries": 1
+  }
+}

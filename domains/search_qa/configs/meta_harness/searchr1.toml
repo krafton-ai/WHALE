@@ -1,0 +1,92 @@
+# Search-R1 meta-harness launcher config.
+#
+# Edit this file to control everything: vLLM model/replicas/GPUs, retriever
+# layout, evaluation sweep, proposer (Claude Code), meta loop iterations.
+#
+# Run with:
+#   uv run python scripts/run_meta_harness.py @ configs/meta_harness/searchr1.toml
+#
+# CLI flags that override TOML values: --session, --cwd, --run-name,
+# --iterations, --fresh / --no-fresh, --propose-only.
+
+# === Run identity =============================================================
+[run]
+session  = "meta-harness"                                # tmux session name
+run_name = "search-r1-qwen3.5-2b-mh"                     # writes to meta_harness/runs/<run_name>/
+cwd      = "."   # the domains/search_qa directory of this repository
+
+# === Task model (vLLM) ========================================================
+# 8 replicas, one per GPU. meta-harness eval round-robins across them via
+# SEARCH_R1_VLLM_URLS env (set by the launcher).
+[vllm]
+model                   = "Qwen/Qwen3.5-2B"   # or local checkpoint path
+replicas                = 8
+base_port               = 8044                # ports 8044..8051
+gpu_offset              = 0                   # GPUs 0..7
+tool_call_parser        = "qwen3_coder"       # Qwen3.5 chat template emits XML <tool_call><function=...><parameter=...> tags
+gpu_memory_utilization  = 0.45                # leave headroom for the colocated retriever's fp16 FAISS upload (~30GB)
+max_model_len           = 32768               # lockstep with verl rollout.max_model_len in train_grpo_qwen3_5_2b_paper.sh
+ready_timeout_s         = 600                 # seconds the training pane waits for ALL replicas
+client_type             = "openai_chat_completions"
+api_key_var             = ""                  # optional env var for non-vLLM endpoints
+# Qwen3.5-2B-specific extra args:
+#   --language-model-only         skip vision encoder allocation (Qwen3_5ForConditionalGeneration is
+#                                 multimodal; text-only Search-R1 input never triggers vision path).
+#   --reasoning-parser qwen3      official vLLM Qwen3.5 recipe parser for <think>...</think> blocks.
+# Keep prefill/cache flags aligned with scripts/launch_vllm_replicas.sh defaults.
+extra_args = [
+  "--enforce-eager",
+  "--language-model-only",
+  "--reasoning-parser", "qwen3",
+  "--enable-chunked-prefill",
+  "--enable-prefix-caching",
+]
+
+# === Retriever (e5 + FAISS) ===================================================
+# 8 replicas matching MULTI_RETRIEVE=1 training layout (each replica a full
+# wiki-18 index on its own GPU). Same GPUs as vLLM — retriever uses ~30 GB
+# fp16, vLLM uses ~4 GB; both fit comfortably on a 141 GB H200.
+[retriever]
+replicas    = 8
+base_port   = 8000                            # ports 8000..8007
+gpu_offset  = 0                               # GPUs 0..7
+faiss_gpu   = 1                               # 1 = GPU FAISS, 0 = CPU FAISS
+topk        = 3
+
+# === Evaluation sweep =========================================================
+# Generation parameters MUST stay in lockstep with verl GRPO rollout + GRPO
+# validation (val_kwargs) in scripts/nq_hotpotqa/train_grpo_qwen3_5_2b_paper.sh
+# so that meta-harness eval, training rollout, and validation all sample from
+# the same distribution. The slurm_meta_harness.sh path enforces the same set
+# of values via the JSON it writes directly (see lines ~558-575).
+[eval]
+num_eval_examples    = -1                     # -1 = use whole eval parquet
+num_train_examples   = 0
+temperature          = 1.0                    # = verl val_kwargs.temperature
+top_p                = 1.0                    # = verl val_kwargs.top_p
+top_k                = 20                     # = verl val_kwargs.top_k
+max_tokens           = 8192                   # cumulative assistant-token budget
+max_turns            = 4                      # = verl rollout.multi_turn.max_assistant_turns
+max_concurrent       = 256                    # per-harness fanout; 3 harnesses in parallel -> 256 * 3 total
+parallel_harness_evals = 3                    # evaluate 3 proposed harnesses concurrently
+n                    = 1                      # one rollout per MH validation sample
+enable_thinking      = true                   # Qwen3.5: true = activate <think> reasoning (semantics inverted vs Qwen3-1.7B)
+seeds                = [42]
+eval_dataset_path    = "data/searchR1_processed/train_meta_harness_nq_256.parquet"
+max_failures_logged  = 5
+max_successes_logged = 2
+
+# === Proposer (Claude Code) ===================================================
+[proposer]
+model           = "claude-opus-4-7"
+effort          = "max"                       # low | medium | high | max
+propose_timeout = 2400                        # seconds
+num_candidates  = 1
+use_api_key     = false                       # false: strip ANTHROPIC_API_KEY (use subscription)
+
+# === Meta loop ================================================================
+[meta]
+iterations    = 10
+fresh         = true                          # delete and recreate runs/<run_name>/ on start
+skip_baseline = false                         # true: skip Phase 0 baseline sweep
+propose_only  = false                         # true: propose-only smoke test (no benchmark sweep)

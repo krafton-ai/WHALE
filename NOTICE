@@ -1,0 +1,13 @@
+WHALE: Weight-Harness Alternating Learning
+Copyright 2026 The WHALE Authors
+
+This product includes software developed at ByteDance as part of the verl
+project (https://github.com/volcengine/verl), licensed under the Apache License,
+Version 2.0. Modified copies are vendored under domains/<domain>/verl/.
+
+This product includes software from the Search-R1 project
+(https://github.com/PeterGriffinJin/Search-R1), used for the Search QA retrieval
+service and agent loop under domains/search_qa/search_r1/.
+
+Datasets are obtained from their original providers and are not redistributed
+here; see docs/data.md.

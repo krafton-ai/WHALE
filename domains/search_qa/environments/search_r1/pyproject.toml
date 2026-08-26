@@ -1,0 +1,14 @@
+[project]
+name = "search-r1-env"
+version = "0.1.0"
+description = "Verifiers env for Search-R1 (wiki-18 + e5 + FAISS retrieval)"
+requires-python = ">=3.10"
+
+dependencies = [
+  "verifiers",
+  "openai",
+  "httpx",
+  "datasets",
+  "pandas",
+  "pyarrow",
+]

@@ -1,0 +1,93 @@
+tools:
+  - class_name: verl.tools.search_tool.SearchTool
+    config:
+      retrieval_service_url: http://127.0.0.1:8000/retrieve
+      num_workers: 32
+      rate_limit: 32
+      enable_global_rate_limit: false
+      timeout: 30
+      type: native
+      # Per-doc token cap. wiki-18 measurements: median 148 / p95 183 / p99 208
+      # / max 937 tokens. Capping at 200 trims only ~1% long-tail outliers but
+      # bounds tool_response size for vLLM KV-cache safety with MAX_MODEL_LEN=10k.
+      # Set to 0 to disable truncation.
+      max_doc_tokens: 200
+      tokenizer_name: Qwen/Qwen3.5-2B
+    # Schema layout below is byte-identical to what the meta-harness verifiers
+    # stack emits for environments/search_r1/base_harness.py:search via
+    # `from verifiers.utils.tool_utils import function_schema`. Specifically:
+    #
+    #   * `function.description` reproduces the docstring AFTER inspect.getdoc()
+    #     dedent (so no leading 4-space indent on body lines; matches
+    #     verifiers' FuncSchema.description exactly).
+    #   * Each property carries Pydantic-derived metadata (default, items,
+    #     title) so verl's `model_dump(exclude_unset=True, exclude_none=True)`
+    #     emits the same keys in the same order. verl/tools/schemas.py was
+    #     restructured to declare only the leading fields (properties+required
+    #     on parameters; nothing on properties) and put the rest through
+    #     extras — so YAML key order controls the trailing keys.
+    #   * `required` lists all three params (mirrors verifiers marking every
+    #     signature-declared arg as required even when it has a default). The
+    #     model still receives the defaults via the schema, so behaviour is
+    #     unchanged; only the `required` array shape shifts.
+    #   * `additionalProperties: false` matches verifiers' `strict` mode.
+    #
+    # Don't reorder fields without re-checking the round-trip against
+    # `function_schema(search)` from verifiers — the goal is that
+    # `apply_chat_template(messages, tools=[verl_schema_dump])` produces
+    # byte-identical bytes to what the OpenAI server side produces from the
+    # verifiers-generated dict.
+    tool_schema:
+      type: function
+      function:
+        name: search
+        description: |-
+          Searches the web for relevant information based on a single query. Returns the top-k passages for that one query.
+
+          Mirrors `verl/tools/search_tool.py:SearchTool.execute()` payload + response
+          handling so meta-harness h0 (= a verbatim copy of this file) gives bit-for-bit
+          identical model-facing tool_response as the native verl SearchTool path
+          (HARNESS_PATH=none / unmodified main branch behavior). Specifically:
+
+            - signature `query_list: list[str]` matches the yaml schema in
+              configs/tool_config/search_tool_config.yaml (see env.py validation)
+            - request payload includes `return_scores=True`, the per-call
+              `max_doc_tokens` (default 200), and `tokenizer_name="Qwen/Qwen3.5-2B"`
+              so the retriever server wraps each doc as
+              `{"document": ..., "score": ...}` (Tier 1 truncation also applied
+              server-side). Without these, the server returns raw doc dicts and
+              `_passages_to_string` raises `KeyError: 'document'` (caught in
+              run 29144).
+            - response is wrapped as `json.dumps({"result": <stitched docs>},
+              ensure_ascii=False)` — matches verl SearchTool's tool_response shape.
+        parameters:
+          properties:
+            query_list:
+              description: |-
+                A list containing exactly ONE fully-formed semantic query.
+                Multiple queries are not accepted; pass only one.
+              items:
+                type: string
+              title: Query List
+              type: array
+            topk:
+              default: 3
+              description: number of passages to return (default 3).
+              title: Topk
+              type: integer
+            max_doc_tokens:
+              default: 200
+              description: |-
+                per-doc token cap applied server-side before passages
+                are returned. Default 200. Raise (e.g. 400) for richer per-doc
+                content at the cost of larger tool_response; lower (e.g. 100) to
+                pack more retrieval calls under the same context budget.
+              title: Max Doc Tokens
+              type: integer
+          required:
+            - query_list
+            - topk
+            - max_doc_tokens
+          title: search_args
+          type: object
+          additionalProperties: false

@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "proposer_model": "claude-opus-4-7",
+    "proposer_effort": "max",
+    "propose_timeout_s": 2400,
+    "proposals_per_iter": 3,
+    "early_stop_success_rate": 1.0
+  },
+  "task_profiles": {
+    "mh_val": {
+      "dataset_path": "data/chess_puzzle/lichess_puzzles_mh_val_256.parquet",
+      "limit": 256
+    }
+  },
+  "models": [
+    {
+      "provider": "openai-compatible",
+      "model": "Qwen/Qwen3.5-4B",
+      "api_base": "http://127.0.0.1:8044/v1",
+      "api_key_env": "OPENAI_API_KEY",
+      "temperature": 1.0,
+      "top_p": 1.0,
+      "top_k": 20,
+      "max_tokens": 8129,
+      "batch_concurrency": 128,
+      "chat_template_kwargs": {"enable_thinking": true}
+    }
+  ],
+  "seeds": [42],
+  "eval": {
+    "seed": 42,
+    "limit": 256,
+    "assistant_token_budget": 8129,
+    "policy_max_tokens": 8129,
+    "max_turns": 9,
+    "default_max_turns": 9,
+    "max_turns_cap": 18,
+    "primary_metric": "solved_rate"
+  }
+}

@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv*/
+data/
+outputs/
+meta_harness/runs/
+wandb/
+*.log
