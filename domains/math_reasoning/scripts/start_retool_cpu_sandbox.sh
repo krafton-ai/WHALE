@@ -6,7 +6,7 @@ set -euo pipefail
 REPO="${REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 RUN_NAME="${RUN_NAME:-retool-grpo-qwen3.5-2b-r8192-bs128}"
 
-SANDBOX_PARTITION="${SANDBOX_PARTITION:-m7i-cpu2}"
+SANDBOX_PARTITION="${SANDBOX_PARTITION:-cpu}"   # set to a CPU partition on your cluster
 SANDBOX_CPUS_PER_TASK="${SANDBOX_CPUS_PER_TASK:-16}"
 SANDBOX_PORT="${SANDBOX_PORT:-8080}"
 SANDBOX_TIME="${SANDBOX_TIME:-48:00:00}"
