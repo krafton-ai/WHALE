@@ -10,6 +10,14 @@ searches for a better harness under the updated model, and repeats. The weight
 update is instantiated with online rejection-sampling fine-tuning (RSFT) and the
 harness search with Meta-Harness (MH).
 
+![WHALE at a glance](docs/assets/whale_overview.png)
+
+*(a) Updating only the model weights or only the harness moves along a single
+axis of the objective; alternating small weight-update and harness-search steps
+approaches the joint optimum. (b) Best test mean@8 accuracy of Qwen3.5-2B/4B
+agents on seven-benchmark search QA, AIME 2024/2025 mathematical reasoning with
+Python execution, and Lichess chess puzzles.*
+
 ## Contents
 
 ```
