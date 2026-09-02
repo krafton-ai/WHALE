@@ -1,7 +1,6 @@
 # WHALE: A Simple Recipe for Joint Harness-Weight Optimization
 
-Code and instructions to reproduce the experiments in *WHALE: A Simple Recipe
-for Joint Harness-Weight Optimization*.
+Code and instructions to reproduce the experiments in ***WHALE**: **W**eight-**H**arness **A**lternating **LE**aring*.
 
 An agentic system is determined jointly by its model parameters and by the
 harness that mediates context, tools and control flow. WHALE alternates the two:
