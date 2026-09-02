@@ -1,13 +1,15 @@
 # WHALE: A Simple Recipe for Joint Harness-Weight Optimization
 
-Code and instructions to reproduce the experiments in ***WHALE**: **W**eight-**H**arness **A**lternating **LE**aring*.
+Code and instructions to reproduce the experiments in ***WHALE**: **W**eight-**H**arness **A**lternating **LE**arning*.
 
 An agentic system is determined jointly by its model parameters and by the
 harness that mediates context, tools and control flow. WHALE alternates the two:
 each cycle trains the model for a small budget under the current harness, then
 searches for a better harness under the updated model, and repeats. The weight
 update is instantiated with online rejection-sampling fine-tuning (RSFT) and the
-harness search with Meta-Harness (MH).
+harness search with Meta-Harness (MH). The paper is
+[WHALE: A Simple Recipe for Joint Harness-Weight
+Optimization](https://arxiv.org/abs/2609.00196).
 
 ![WHALE at a glance](docs/assets/whale_overview.png)
 
