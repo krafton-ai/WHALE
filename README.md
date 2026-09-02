@@ -62,6 +62,22 @@ This repository contains the code paths exercised by those four conditions. Each
 domain vendors its own copy of the training framework, because the three
 experiments run against different modifications of it.
 
+## Citation
+
+If this repository is useful for your research, please cite the paper:
+
+```bibtex
+@misc{kim2026whalesimplerecipejoint,
+      title={WHALE: A Simple Recipe for Joint Harness-Weight Optimization},
+      author={Haechan Kim and Yoonho Lee and Gisang Lee and Chelsea Finn and Kangwook Lee},
+      year={2026},
+      eprint={2609.00196},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2609.00196},
+}
+```
+
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for the vendored
