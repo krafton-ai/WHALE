@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below (see preferred-citation)."
+type: software
+title: "WHALE: A Simple Recipe for Joint Harness-Weight Optimization"
+authors:
+  - family-names: Kim
+    given-names: Haechan
+  - family-names: Lee
+    given-names: Yoonho
+  - family-names: Lee
+    given-names: Gisang
+  - family-names: Finn
+    given-names: Chelsea
+  - family-names: Lee
+    given-names: Kangwook
+repository-code: "https://github.com/krafton-ai/WHALE"
+license: Apache-2.0
+identifiers:
+  - type: doi
+    value: 10.48550/arXiv.2609.00196
+    description: "arXiv preprint"
+preferred-citation:
+  type: article
+  title: "WHALE: A Simple Recipe for Joint Harness-Weight Optimization"
+  authors:
+    - family-names: Kim
+      given-names: Haechan
+    - family-names: Lee
+      given-names: Yoonho
+    - family-names: Lee
+      given-names: Gisang
+    - family-names: Finn
+      given-names: Chelsea
+    - family-names: Lee
+      given-names: Kangwook
+  journal: "arXiv preprint arXiv:2609.00196"
+  year: 2026
+  doi: 10.48550/arXiv.2609.00196
+  url: "https://arxiv.org/abs/2609.00196"
